@@ -7,15 +7,19 @@ using namespace std;
 // unordered set solution can be possible too!
 bool canSum(int, vector<int>, unordered_map<int, int> &, int);
 
+bool canSumOptimized(int, vector<int>, unordered_map<int, int> &);
+
 int main(int argc, char * argv[])
 {
-    int target = 10;
+    int target = 18;
     vector<int> array = {3, 7};
     unordered_map<int, int> memo;
 
     // sum will be attached to the memo as key, the arr element will be 
     // value which means that this value is reachable with this array element;
-    int sum = 0; cout << canSum(target, array, memo, sum) << endl;
+    int sum = 0;
+
+    cout << canSumOptimized(target, array, memo) << endl;
 
     return 0;
 }
@@ -38,5 +42,29 @@ bool canSum(int target, vector<int>array, unordered_map<int, int> &memo, int sum
         if(target - array[i] == 0)
             return true;
     }
+    return false;
+}
+
+// From tutorial My solution turned out to be not so effective!
+// There is better approach even tough my approach can be similar
+bool canSumOptimized(int target, vector<int>array, unordered_map<int, int> &memo)
+{
+    if(memo.find(target) != memo.end()) return memo[target]; // here is the trick!
+    // Instead of storing calcualted value of the subtree we can use it store bool value of sub tree.
+    if(target == 0) return true;
+    if(target < 0) return false;
+
+    for(int i=0; i<array.size(); i++)
+    {
+        int new_target = target - array[i];
+        
+        if(canSumOptimized(new_target, array, memo))
+        {
+            memo[target] = true;
+            return true;
+        }
+    }
+
+    memo[target] = false;
     return false;
 }
